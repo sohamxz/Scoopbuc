@@ -1,0 +1,34 @@
+name: Auto Update Scoop Bucket
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Every day at 3 AM UTC
+  workflow_dispatch:
+
+jobs:
+  checkver:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install Scoop
+      shell: powershell
+      run: |
+        Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+        iwr -useb get.scoop.sh | iex
+        scoop install git jq
+
+    - name: Run checkver script
+      shell: powershell
+      run: ./checkver.ps1
+
+    - name: Commit & Push changes
+      shell: powershell
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add bucket/
+        git commit -m "Auto update manifests" || echo "No changes to commit"
+        git push
