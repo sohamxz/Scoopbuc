@@ -1,14 +1,16 @@
 on:
-  pull_request_target:
+  pull_request:
     types: [opened]
-name: Pull Requests
+name: Pull requests
 jobs:
   pullRequestHandler:
     name: PullRequestHandler
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@main
-      - name: PullRequestHandler
-        uses: ScoopInstaller/GithubActions@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@main
+    - name: PullRequestHandler
+      uses: Ash258/Scoop-GithubActions@stable-win
+      env:
+        SHOVEL: '1'
+        GITH_EMAIL: ${{ secrets.GITH_EMAIL }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
